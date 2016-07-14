@@ -14,11 +14,9 @@ def c(s):
 python_bin = "python"
 
 def run(lib, outpath):
-    c("ipy -m robot.libdoc %s %s" % (lib, outpath))
+    c("%s -m robot.libdoc %s %s" % (python_bin, lib, outpath))
 
 def gen_doc(lib):
-
-    run(lib, r'%s\%s.html' % (docdir, lib))
     run(lib, r'%s\%s.xml' % (docdir, lib))
 
 libs = [s.strip() for s in """\
