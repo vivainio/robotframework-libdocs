@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<keywordspec generated="20160714 18:41:37" type="library" name="Collections" format="ROBOT">
-<version>2.9.2</version>
+<keywordspec generated="20180918 10:11:25" type="library" name="Collections" format="ROBOT">
+<version>3.0.4</version>
 <scope>global</scope>
 <namedargs>yes</namedargs>
 <doc>A test library providing keywords for handling lists and dictionaries.
@@ -45,11 +45,11 @@ objects are needed.
 
 Some keywords accept arguments that are handled as Boolean values true or
 false. If such an argument is given as a string, it is considered false if
-it is either empty or case-insensitively equal to ``false`` or ``no``.
-Keywords verifying something that allow dropping actual and expected values
-from the possible error message also consider string ``no values`` as false.
-Other strings are considered true regardless their value, and other
-argument types are tested using same
+it is either an empty string or case-insensitively equal to ``false``,
+``none`` or ``no``. Keywords verifying something that allow dropping actual
+and expected values from the possible error message also consider string
+``no values`` to be false. Other strings are considered true regardless
+their value, and other argument types are tested using the same
 [http://docs.python.org/2/library/stdtypes.html#truth-value-testing|rules
 as in Python].
 
@@ -68,6 +68,7 @@ False examples:
 
 Note that prior to Robot Framework 2.9 some keywords considered all
 non-empty strings, including ``False``, to be true.
+Considering ``none`` false is new in Robot Framework 3.0.3.
 
 = Data in examples =
 
@@ -309,8 +310,8 @@ Example:
 </arguments>
 <doc>Returns keys of the given ``dictionary``.
 
-Keys are returned in sorted order. The given ``dictionary`` is never
-altered by this keyword.
+If keys are sortable, they are returned in sorted order. The given
+``dictionary`` is never altered by this keyword.
 
 Example:
 | ${keys} = | Get Dictionary Keys | ${D3} |
@@ -573,7 +574,7 @@ The original iterable is never altered.</doc>
 <arg>value</arg>
 <arg>msg=None</arg>
 </arguments>
-<doc>Fails if the ``value`` is not found from ``list``.
+<doc>Fails if the ``value`` is found from ``list``.
 
 See `List Should Contain Value` for an explanation of ``msg``.</doc>
 <tags>
