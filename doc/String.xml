@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<keywordspec generated="20160714 18:41:37" type="library" name="String" format="ROBOT">
-<version>2.9.2</version>
+<keywordspec generated="20180918 10:11:25" type="library" name="String" format="ROBOT">
+<version>3.0.4</version>
 <scope>global</scope>
 <namedargs>yes</namedargs>
 <doc>A test library for string manipulation and verification.
@@ -77,9 +77,7 @@ Examples:
 
 Use `Encode String To Bytes` if you need to convert Unicode strings to
 byte strings, and `Convert To String` in ``BuiltIn`` if you need to
-convert arbitrary objects to Unicode strings.
-
-New in Robot Framework 2.7.7.</doc>
+convert arbitrary objects to Unicode strings.</doc>
 <tags>
 </tags>
 </kw>
@@ -107,9 +105,7 @@ Examples:
 Use `Convert To Bytes` in ``BuiltIn`` if you want to create bytes based
 on character or integer sequences. Use `Decode Bytes To String` if you
 need to convert byte strings to Unicode strings and `Convert To String`
-in ``BuiltIn`` if you need to convert arbitrary objects to Unicode.
-
-New in Robot Framework 2.7.7.</doc>
+in ``BuiltIn`` if you need to convert arbitrary objects to Unicode.</doc>
 <tags>
 </tags>
 </kw>
@@ -208,8 +204,9 @@ on it.
 
 The match is case-sensitive by default, but giving ``case_insensitive``
 a true value makes it case-insensitive. The value is considered true
-if it is a non-empty string that is not equal to ``false`` or ``no``.
-If the value is not a string, its truth value is got directly in Python.
+if it is a non-empty string that is not equal to ``false``, ``none`` or
+``no``. If the value is not a string, its truth value is got directly
+in Python. Considering ``none`` false is new in RF 3.0.3.
 
 Lines are returned as one string catenated back together with
 newlines. Possible trailing newline is never returned. The
@@ -242,8 +239,9 @@ A line matches only if it matches the ``pattern`` fully.
 
 The match is case-sensitive by default, but giving ``case_insensitive``
 a true value makes it case-insensitive. The value is considered true
-if it is a non-empty string that is not equal to ``false`` or ``no``.
-If the value is not a string, its truth value is got directly in Python.
+if it is a non-empty string that is not equal to ``false``, ``none`` or
+``no``. If the value is not a string, its truth value is got directly
+in Python. Considering ``none`` false is new in RF 3.0.3.
 
 Lines are returned as one string catenated back together with
 newlines. Possible trailing newline is never returned. The
@@ -273,9 +271,10 @@ in Robot Framework test data in particular.
 
 By default lines match only if they match the pattern fully, but
 partial matching can be enabled by giving the ``partial_match``
-argument a true value. The value is considered true if it is a
-non-empty string that is not equal to ``false`` or ``no``. If the
-value is not a string, its truth value is got directly in Python.
+argument a true value. The value is considered true
+if it is a non-empty string that is not equal to ``false``, ``none`` or
+``no``. If the value is not a string, its truth value is got directly
+in Python. Considering ``none`` false is new in RF 3.0.3.
 
 If the pattern is empty, it matches only empty lines by default.
 When partial matching is enabled, empty pattern matches all lines.
@@ -465,12 +464,11 @@ Examples:
 
 Use `Should Be Unicode String` if you want to verify the ``item`` is a
 Unicode string, or `Should Be String` if both Unicode and byte strings
-are fine.
+are fine. See `Should Be String` for more details about Unicode strings
+and byte strings.
 
 The default error message can be overridden with the optional
-``msg`` argument.
-
-New in Robot Framework 2.7.7.</doc>
+``msg`` argument.</doc>
 <tags>
 </tags>
 </kw>
@@ -498,9 +496,17 @@ See also `Should Be Uppercase` and `Should Be Titlecase`.</doc>
 </arguments>
 <doc>Fails if the given ``item`` is not a string.
 
-This keyword passes regardless is the ``item`` is a Unicode string or
-a byte string. Use `Should Be Unicode String` or `Should Be Byte
-String` if you want to restrict the string type.
+With Python 2, except with IronPython, this keyword passes regardless
+is the ``item`` a Unicode string or a byte string. Use `Should Be
+Unicode String` or `Should Be Byte String` if you want to restrict
+the string type. Notice that with Python 2, except with IronPython,
+``'string'`` creates a byte string and ``u'unicode'`` must be used to
+create a Unicode string.
+
+With Python 3 and IronPython, this keyword passes if the string is
+a Unicode string but fails if it is bytes. Notice that with both
+Python 3 and IronPython, ``'string'`` creates a Unicode string, and
+``b'bytes'`` must be used to create a byte string.
 
 The default error message can be overridden with the optional
 ``msg`` argument.</doc>
@@ -537,12 +543,11 @@ See also `Should Be Uppercase` and `Should Be Lowercase`.</doc>
 
 Use `Should Be Byte String` if you want to verify the ``item`` is a
 byte string, or `Should Be String` if both Unicode and byte strings
-are fine.
+are fine. See `Should Be String` for more details about Unicode
+strings and byte strings.
 
 The default error message can be overridden with the optional
-``msg`` argument.
-
-New in Robot Framework 2.7.7.</doc>
+``msg`` argument.</doc>
 <tags>
 </tags>
 </kw>
@@ -569,6 +574,9 @@ See also `Should Be Titlecase` and `Should Be Lowercase`.</doc>
 <arg>msg=None</arg>
 </arguments>
 <doc>Fails if the given ``item`` is a string.
+
+See `Should Be String` for more details about Unicode strings and byte
+strings.
 
 The default error message can be overridden with the optional
 ``msg`` argument.</doc>
@@ -626,9 +634,7 @@ Examples:
 <doc>Splits the given ``string`` to characters.
 
 Example:
-| @{characters} = | Split String To Characters | ${string} |
-
-New in Robot Framework 2.7.</doc>
+| @{characters} = | Split String To Characters | ${string} |</doc>
 <tags>
 </tags>
 </kw>
@@ -657,6 +663,36 @@ Examples:
 | @{last two} =     | Split To Lines | ${manylines} | -2 |    |
 
 Use `Get Line` if you only need to get a single line.</doc>
+<tags>
+</tags>
+</kw>
+<kw name="Strip String">
+<arguments>
+<arg>string</arg>
+<arg>mode=both</arg>
+<arg>characters=None</arg>
+</arguments>
+<doc>Remove leading and/or trailing whitespaces from the given string.
+
+``mode`` is either ``left`` to remove leading characters, ``right`` to
+remove trailing characters, ``both`` (default) to remove the
+characters from both sides of the string or ``none`` to return the
+unmodified string.
+
+If the optional ``characters`` is given, it must be a string and the
+characters in the string will be stripped in the string. Please note,
+that this is not a substring to be removed but a list of characters,
+see the example below.
+
+Examples:
+| ${stripped}=  | Strip String | ${SPACE}Hello${SPACE} | |
+| Should Be Equal | ${stripped} | Hello | |
+| ${stripped}=  | Strip String | ${SPACE}Hello${SPACE} | mode=left |
+| Should Be Equal | ${stripped} | Hello${SPACE} | |
+| ${stripped}=  | Strip String | aabaHelloeee | characters=abe |
+| Should Be Equal | ${stripped} | Hello | |
+
+New in Robot Framework 3.0.</doc>
 <tags>
 </tags>
 </kw>
